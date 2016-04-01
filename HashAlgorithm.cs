@@ -5,14 +5,13 @@ namespace KetamaHash
 {
     internal class HashAlgorithm
     {
-        public static long hash(byte[] digest, int nTime)
+        public static long Hash(byte[] digest, int nTime)
         {
-            long rv = ((long)(digest[3 + nTime * 4] & 0xFF) << 24)
-                    | ((long)(digest[2 + nTime * 4] & 0xFF) << 16)
-                    | ((long)(digest[1 + nTime * 4] & 0xFF) << 8)
-                    | ((long)digest[0 + nTime * 4] & 0xFF);
-
-            return rv & 0xffffffffL; // Truncate to 32-bits
+            const int mask = 0xFF;
+            return ((long) (digest[3 + nTime*4] & mask) << 24)
+                   | ((long) (digest[2 + nTime*4] & mask) << 16)
+                   | ((long) (digest[1 + nTime*4] & mask) << 8)
+                   | ((long) digest[0 + nTime*4] & mask);
         }
 
         /// <summary>
@@ -20,12 +19,12 @@ namespace KetamaHash
         /// </summary>
         /// <param name="k"></param>
         /// <returns></returns>
-        public static byte[] computeMd5(string k)
+        public static byte[] ComputeMd5(string k)
         {
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] keyBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(k));
-            md5.Clear();
-            return keyBytes;
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                return md5.ComputeHash(Encoding.UTF8.GetBytes(k));
+            }
         }
     }
 }
